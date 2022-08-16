@@ -196,12 +196,12 @@ with b0RemoteApi.RemoteApiClient('b0RemoteApi_V-REP',
                                                                  client.simxServiceCall())
                     client.simxSynchronousTrigger()
             #except:
-            #pass
+                #pass
             success = currentState.pop(0)
             if success:
                 pass
-                print("current state:")
-                print(currentState)
+                #print("current state:")
+                #print(currentState)
                 # print("statevector:")
                 # print(StateVector)
             else:
@@ -210,15 +210,6 @@ with b0RemoteApi.RemoteApiClient('b0RemoteApi_V-REP',
             currentStateFeasibleActions = getFeasibleActions(currentState)
             stateString = changeStateToString(currentState)
 
-            # choose action
-            action = agent_q.chooseAction(stateString, currentStateFeasibleActions)
-            print("new action:" + action)
-            if action == "i_A":  # reset
-                reset = True
-            else:
-                actionsFromThisEpisode.append(action)
-                client.simxCallScriptFunction("setAction@Bill", "sim.scripttype_childscript", action,
-                                              client.simxServiceCall())
 
             if isRunning:
                 # step simulation forward
@@ -227,6 +218,18 @@ with b0RemoteApi.RemoteApiClient('b0RemoteApi_V-REP',
                 if not (stepCounterEpisode == 0):
                     print("action "+str(stepCounterEpisode))
 
+                print("current state:")
+                print(currentState)
+
+                # choose action
+                action = agent_q.chooseAction(stateString, currentStateFeasibleActions)
+                print("new action:" + action)
+                if action == "i_A":  # reset
+                    reset = True
+                else:
+                    actionsFromThisEpisode.append(action)
+                    client.simxCallScriptFunction("setAction@Bill", "sim.scripttype_childscript", action,
+                                                  client.simxServiceCall())
 
                 #get risk
                 _, risk = client.simxCallScriptFunction("getMaxRisk@RiskMetricCalculator", "sim.scripttype_childscript",
